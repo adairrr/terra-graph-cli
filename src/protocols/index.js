@@ -5,17 +5,14 @@ const NearTemplateCodeGen = require('./near/codegen/template')
 const EthereumABI = require('./ethereum/abi')
 const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
-​
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
     const firstDataSourceKind = dataSourcesAndTemplates[0].kind
     return new Protocol(firstDataSourceKind)
   }
-​
   constructor(name) {
     this.name = this.normalizeName(name)
   }
-​
   availableProtocols() {
     return immutable.fromJS({
       // `ethereum/contract` is kept for backwards compatibility.
@@ -25,12 +22,10 @@ module.exports = class Protocol {
       tendermint: ['tendermint/data'],
     })
   }
-​
   normalizeName(name) {
     return this.availableProtocols()
       .findKey(possibleNames => possibleNames.includes(name))
   }
-​
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
@@ -38,7 +33,6 @@ module.exports = class Protocol {
       .get(this.name, immutable.List())
       .includes(kind)
   }
-​
   hasABIs() {
     switch (this.name) {
       case 'ethereum':
@@ -50,7 +44,6 @@ module.exports = class Protocol {
         return false
     }
   }
-​
   getTypeGenerator(options) {
     switch (this.name) {
       case 'ethereum':
@@ -62,7 +55,6 @@ module.exports = class Protocol {
         return null
     }
   }
-​
   getTemplateCodeGen(template) {
     switch (this.name) {
       case 'ethereum':
@@ -78,7 +70,6 @@ module.exports = class Protocol {
         )
     }
   }
-​
   getABI() {
     switch (this.name) {
       case 'ethereum':
@@ -90,10 +81,8 @@ module.exports = class Protocol {
         return null
     }
   }
-​
   getSubgraph(options = {}) {
     const optionsWithProtocol = { ...options, protocol: this }
-​
     switch (this.name) {
       case 'ethereum':
       case 'ethereum/contract':
@@ -102,6 +91,10 @@ module.exports = class Protocol {
         return new NearSubgraph(optionsWithProtocol)
       case 'tendermint':
         return new NearSubgraph(optionsWithProtocol)
+      default:
+        throw new Error(
+          `Data sources with kind '${this.name}' are not supported yet`,
+        )
     }
   }
 }
