@@ -1,8 +1,14 @@
 const immutable = require('immutable')
-const EthereumTypeGenerator = require('./ethereum/type-generator')
-const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
+
+const CosmosTemplateCodeGen = require('./cosmos/codegen/template')
+const CosmosTypeGenerator = require('./cosmos/type-generator')
+const CosmosSubgraph = require('./cosmos/subgraph')
+
 const EthereumABI = require('./ethereum/abi')
+const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
+const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumSubgraph = require('./ethereum/subgraph')
+
 const NearSubgraph = require('./near/subgraph')
 module.exports = class Protocol {
   static fromDataSources(dataSourcesAndTemplates) {
@@ -51,7 +57,7 @@ module.exports = class Protocol {
       case 'near':
         return null
       case 'tendermint':
-        return null
+        return new CosmosTypeGenerator(options)
     }
   }
   getTemplateCodeGen(template) {
@@ -59,6 +65,8 @@ module.exports = class Protocol {
       case 'ethereum':
       case 'ethereum/contract':
         return new EthereumTemplateCodeGen(template)
+      case 'tendermint':
+        return new CosmosTemplateCodeGen(template)
       default:
         throw new Error(
           `Data sources with kind '${this.name}' are not supported yet`,
@@ -85,7 +93,7 @@ module.exports = class Protocol {
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
       case 'tendermint':
-        return new NearSubgraph(optionsWithProtocol)
+        return new CosmosSubgraph(optionsWithProtocol)
       default:
         throw new Error(
           `Data sources with kind '${this.name}' are not supported yet`,
