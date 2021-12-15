@@ -3,7 +3,7 @@ const ABI = require('./abi')
 const DataSourcesExtractor = require('../../command-helpers/data-sources')
 const { validateContractValues } = require('../../validation')
 
-module.exports = class EthereumSubgraph {
+module.exports = class TendermintSubgraph {
   constructor(options = {}) {
     this.manifest = options.manifest
     this.resolveFile = options.resolveFile
@@ -73,13 +73,13 @@ ${abiNames
   }
 
   validateContractAddresses() {
-    const ethereumAddressPattern = /^(0x)?[0-9a-fA-F]{40}$/
+    const tendermintAddressPattern = /^(0x)?[0-9a-fA-F]{40}$/
 
     return validateContractValues(
       this.manifest,
       this.protocol,
       'address',
-      address => ethereumAddressPattern.test(address),
+      address => tendermintAddressPattern.test(address),
       "Must be 40 hexadecimal characters, with an optional '0x' prefix.",
     )
   }

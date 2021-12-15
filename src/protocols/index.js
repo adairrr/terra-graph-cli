@@ -1,8 +1,8 @@
 const immutable = require('immutable')
 
-const CosmosTemplateCodeGen = require('./cosmos/codegen/template')
-const CosmosTypeGenerator = require('./cosmos/type-generator')
-const CosmosSubgraph = require('./cosmos/subgraph')
+const TendermintTemplateCodeGen = require('./tendermint/codegen/template')
+const TendermintTypeGenerator = require('./tendermint/type-generator')
+const TendermintSubgraph = require('./tendermint/subgraph')
 
 const EthereumABI = require('./ethereum/abi')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
@@ -24,7 +24,7 @@ module.exports = class Protocol {
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
       ethereum: ['ethereum', 'ethereum/contract'],
       near: ['near'],
-      tendermint: ['tendermint/data'],
+      tendermint: ['tendermint','tendermint/data'],
     })
   }
   normalizeName(name) {
@@ -57,7 +57,8 @@ module.exports = class Protocol {
       case 'near':
         return null
       case 'tendermint':
-        return new CosmosTypeGenerator(options)
+        // return new TendermintTypeGenerator(options)
+        return null
     }
   }
   getTemplateCodeGen(template) {
@@ -66,10 +67,11 @@ module.exports = class Protocol {
       case 'ethereum/contract':
         return new EthereumTemplateCodeGen(template)
       case 'tendermint':
-        return new CosmosTemplateCodeGen(template)
+        // return new TendermintTemplateCodeGen(template)
+        return null
       default:
         throw new Error(
-          `Data sources with kind '${this.name}' are not supported yet`,
+          `Data sources with kind '${JSON.stringify(this)}' '${this.name}' are not supported yet`,
         )
     }
   }
@@ -93,10 +95,11 @@ module.exports = class Protocol {
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
       case 'tendermint':
-        return new CosmosSubgraph(optionsWithProtocol)
+      case 'tendermint/data':
+        return new TendermintSubgraph(optionsWithProtocol)
       default:
         throw new Error(
-          `Data sources with kind '${this.name}' are not supported yet`,
+          `Data sources with kind '${this.name}' for subgraph are not supported yet`,
         )
     }
   }

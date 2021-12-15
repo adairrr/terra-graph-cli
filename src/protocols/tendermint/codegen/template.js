@@ -1,6 +1,6 @@
 const tsCodegen = require('../../../codegen/typescript')
 
-module.exports = class CosmosTemplateCodeGen {
+module.exports = class TendermintTemplateCodeGen {
   constructor(template) {
     this.template = template
   }

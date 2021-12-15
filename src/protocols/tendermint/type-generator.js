@@ -7,7 +7,7 @@ const { step, withSpinner } = require('../../command-helpers/spinner')
 const { GENERATED_FILE_NOTE } = require('../../codegen/typescript')
 const { displayPath } = require('../../command-helpers/fs')
 
-module.exports = class EthereumTypeGenerator {
+module.exports = class TendermintTypeGenerator {
   constructor(options = {}) {
     this.sourceDir = options.sourceDir
     this.outputDir = options.outputDir
@@ -47,45 +47,7 @@ module.exports = class EthereumTypeGenerator {
     )
   }
 
-  _loadABI(dataSource, name, maybeRelativePath, spinner) {
-    try {
-      if (this.sourceDir) {
-        let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
-        step(spinner, `Load contract ABI from`, displayPath(absolutePath))
-        return { dataSource: dataSource, abi: ABI.load(name, absolutePath) }
-      } else {
-        return { dataSource: dataSource, abi: ABI.load(name, maybeRelativePath) }
-      }
-    } catch (e) {
-      throw Error(`Failed to load contract ABI: ${e.message}`)
-    }
-  }
-
-  async loadDataSourceTemplateABIs(subgraph) {
-    return await withSpinner(
-      `Load data source template ABIs`,
-      `Failed to load data source template ABIs`,
-      `Warnings while loading data source template ABIs`,
-      async spinner => {
-        let abis = []
-        for (let template of subgraph.get('templates', immutable.List())) {
-          for (let abi of template.getIn(['mapping', 'abis'])) {
-            abis.push(
-              this._loadDataSourceTemplateABI(
-                template,
-                abi.get('name'),
-                abi.get('file'),
-                spinner,
-              ),
-            )
-          }
-        }
-        return abis
-      },
-    )
-  }
-
-  _loadDataSourceTemplateABI(template, name, maybeRelativePath, spinner) {
+  async _loadDataSourceTemplateABI(template, name, maybeRelativePath, spinner) {
     try {
       if (this.sourceDir) {
         let absolutePath = path.resolve(this.sourceDir, maybeRelativePath)
@@ -103,20 +65,7 @@ module.exports = class EthereumTypeGenerator {
     }
   }
 
-  generateTypesForABIs(abis) {
-    return withSpinner(
-      `Generate types for contract ABIs`,
-      `Failed to generate types for contract ABIs`,
-      `Warnings while generating types for contract ABIs`,
-      async spinner => {
-        return await Promise.all(
-          abis.map(async (abi, name) => await this._generateTypesForABI(abi, spinner)),
-        )
-      },
-    )
-  }
-
-  async _generateTypesForABI(abi, spinner) {
+  async  _generateTypesForABI(abi, spinner) {
     try {
       step(
         spinner,

@@ -13,8 +13,8 @@ module.exports = class AbiCodeGenerator {
     return [
       tsCodegen.moduleImports(
         [
-          // Ethereum integration
-          'ethereum',
+          // Tendermint integration
+          'tendermint',
 
           // Base classes
           'JSONValue',

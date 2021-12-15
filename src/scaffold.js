@@ -41,8 +41,10 @@ const generatePackageJson = ({ subgraphName, node }) =>
           subgraphName,
       },
       dependencies: {
-        '@graphprotocol/graph-cli': `${module.exports.version}`,
-        '@graphprotocol/graph-ts': `0.22.1`,
+        '@graphprotocol/graph-cli': `/Users/patrycja/Workspaces/figment/graph-cli`,
+        '@graphprotocol/graph-ts': `/Users/patrycja/Workspaces/figment/graph-ts`,
+        // '@graphprotocol/graph-cli': `${module.exports.version}`,
+        // '@graphprotocol/graph-ts': `0.22.1`,
       },
     }),
     { parser: 'json' },

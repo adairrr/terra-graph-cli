@@ -8,7 +8,8 @@ type Schema {
 
 union DataSource =
   EthereumContractDataSource |
-  NearContractDataSource
+  NearContractDataSource |
+  TendermintContractDataSource
 
 union DataSourceTemplate = EthereumContractDataSourceTemplate
 
@@ -28,6 +29,14 @@ type NearContractDataSource {
   mapping: NearContractMapping!
 }
 
+type TendermintContractDataSource {
+  kind: String!
+  name: String!
+  network: String
+  source: TendermintContractSource!
+  mapping: TendermintContractMapping!
+}
+
 type EthereumContractSource {
   address: String
   abi: String!
@@ -36,6 +45,12 @@ type EthereumContractSource {
 
 type NearContractSource {
   account: String
+  startBlock: BigInt
+}
+
+type TendermintContractSource {
+  account: String
+  abi: String
   startBlock: BigInt
 }
 
@@ -60,6 +75,18 @@ type NearContractMapping {
   receiptHandlers: [NearReceiptHandler!]
 }
 
+type TendermintContractMapping {
+  kind: String
+  apiVersion: String!
+  language: String!
+  file: File!
+  entities: [String!]!
+  abis: [TendermintContractAbi!]!
+  blockHandlers: [TendermintBlockHandler!]
+  callHandlers: [TendermintCallHandler!]
+  eventHandlers: [TendermintContractEventHandler!]
+}
+
 type EthereumContractAbi {
   name: String!
   file: File!
@@ -78,7 +105,16 @@ type NearBlockHandler {
   handler: String!
 }
 
+type TendermintBlockHandler {
+  handler: String!
+}
+
 type EthereumCallHandler {
+  function: String!
+  handler: String!
+}
+
+type TendermintCallHandler {
   function: String!
   handler: String!
 }
@@ -88,6 +124,12 @@ type NearReceiptHandler {
 }
 
 type EthereumContractEventHandler {
+  event: String!
+  topic0: String
+  handler: String!
+}
+
+type TendermintContractEventHandler {
   event: String!
   topic0: String
   handler: String!
