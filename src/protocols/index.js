@@ -6,6 +6,13 @@ const EthereumABI = require('./ethereum/abi')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumSubgraph = require('./ethereum/subgraph')
+const NearSubgraph = require('./near/subgraph')
+const EthereumContract = require('./ethereum/contract')
+const NearContract = require('./near/contract')
+const EthereumManifestScaffold = require('./ethereum/scaffold/manifest')
+const NearManifestScaffold = require('./near/scaffold/manifest')
+const EthereumMappingScaffold = require('./ethereum/scaffold/mapping')
+const NearMappingScaffold = require('./near/scaffold/mapping')
 
 const NearSubgraph = require('./near/subgraph')
 module.exports = class Protocol {
@@ -16,7 +23,8 @@ module.exports = class Protocol {
   constructor(name) {
     this.name = this.normalizeName(name)
   }
-  availableProtocols() {
+
+  static availableProtocols() {
     return immutable.fromJS({
       // `ethereum/contract` is kept for backwards compatibility.
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
@@ -25,21 +33,77 @@ module.exports = class Protocol {
       tendermint: ['tendermint'],
     })
   }
+
+  static availableNetworks() {
+    return immutable.fromJS({
+      ethereum: [
+        'mainnet',
+        'kovan',
+        'rinkeby',
+        'ropsten',
+        'goerli',
+        'poa-core',
+        'poa-sokol',
+        'xdai',
+        'matic',
+        'mumbai',
+        'fantom',
+        'bsc',
+        'chapel',
+        'clover',
+        'avalanche',
+        'fuji',
+        'celo',
+        'celo-alfajores',
+        'fuse',
+        'mbase',
+        'arbitrum-one',
+        'arbitrum-rinkeby',
+        'optimism',
+        'optimism-kovan',
+        'aurora',
+        'aurora-testnet',
+      ],
+      near: ['near-mainnet'],
+      tendermint: ['cosmoshub-3', 'cosmoshub-4']
+    })
+  }
+
   normalizeName(name) {
-    return this.availableProtocols()
-      .findKey(possibleNames => possibleNames.includes(name))
+    return Protocol.availableProtocols().findKey(possibleNames =>
+      possibleNames.includes(name),
+    )
+  }
+
+  displayName() {
+    switch (this.name) {
+      case 'ethereum':
+        return 'Ethereum'
+      case 'near':
+        return 'NEAR'
+      case 'tendermint':
+        return 'Tendermint'
+    }
   }
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
-    return this.availableProtocols()
+    return Protocol.availableProtocols()
       .get(this.name, immutable.List())
       .includes(kind)
   }
   hasABIs() {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
+        return true
+      case 'near':
+        return false
+    }
+  }
+
+  hasEvents() {
+    switch (this.name) {
+      case 'ethereum':
         return true
       case 'near/data':
         return false
@@ -50,7 +114,6 @@ module.exports = class Protocol {
   getTypeGenerator(options) {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumTypeGenerator(options)
       case 'near':
         return null
@@ -61,7 +124,6 @@ module.exports = class Protocol {
   getTemplateCodeGen(template) {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumTemplateCodeGen(template)
       case 'tendermint':
         return null
@@ -74,7 +136,6 @@ module.exports = class Protocol {
   getABI() {
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return EthereumABI
       case 'near':
         return null
@@ -86,16 +147,40 @@ module.exports = class Protocol {
     const optionsWithProtocol = { ...options, protocol: this }
     switch (this.name) {
       case 'ethereum':
-      case 'ethereum/contract':
         return new EthereumSubgraph(optionsWithProtocol)
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
       case 'tendermint':
         return new TendermintSubgraph(optionsWithProtocol)
       default:
-        throw new Error(
-          `Data sources with kind '${this.name}' for subgraph are not supported yet`,
-        )
+        throw new Error(`Data sources with kind '${this.name}' are not supported yet`)
+    }
+  }
+
+  getContract() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumContract
+      case 'near':
+        return NearContract
+    }
+  }
+
+  getManifestScaffold() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumManifestScaffold
+      case 'near':
+        return NearManifestScaffold
+    }
+  }
+
+  getMappingScaffold() {
+    switch (this.name) {
+      case 'ethereum':
+        return EthereumMappingScaffold
+      case 'near':
+        return NearMappingScaffold
     }
   }
 }
