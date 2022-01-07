@@ -1,12 +1,11 @@
 const immutable = require('immutable')
 
-const TendermintSubgraph = require('./tendermint/subgraph')
-
-const EthereumABI = require('./ethereum/abi')
-const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const EthereumTypeGenerator = require('./ethereum/type-generator')
+const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
+const EthereumABI = require('./ethereum/abi')
 const EthereumSubgraph = require('./ethereum/subgraph')
 const NearSubgraph = require('./near/subgraph')
+const TendermintSubgraph = require('./tendermint/subgraph')
 const EthereumContract = require('./ethereum/contract')
 const NearContract = require('./near/contract')
 const TendermintContract = require('./tendermint/contract')
@@ -105,7 +104,7 @@ module.exports = class Protocol {
     switch (this.name) {
       case 'ethereum':
         return true
-      case 'near/data':
+      case 'near':
         return false
       case 'tendermint':
         return false
