@@ -1,7 +1,5 @@
 const immutable = require('immutable')
 
-const TendermintTemplateCodeGen = require('./tendermint/codegen/template')
-const TendermintTypeGenerator = require('./tendermint/type-generator')
 const TendermintSubgraph = require('./tendermint/subgraph')
 
 const EthereumABI = require('./ethereum/abi')
@@ -24,7 +22,7 @@ module.exports = class Protocol {
       // New networks (or protocol perhaps) shouldn't have the `/contract` anymore (unless a new case makes use of it).
       ethereum: ['ethereum', 'ethereum/contract'],
       near: ['near'],
-      tendermint: ['tendermint','tendermint/data'],
+      tendermint: ['tendermint'],
     })
   }
   normalizeName(name) {
@@ -45,7 +43,7 @@ module.exports = class Protocol {
         return true
       case 'near/data':
         return false
-      case 'tendermint/data':
+      case 'tendermint':
         return false
     }
   }
@@ -57,7 +55,6 @@ module.exports = class Protocol {
       case 'near':
         return null
       case 'tendermint':
-        // return new TendermintTypeGenerator(options)
         return null
     }
   }
@@ -67,7 +64,6 @@ module.exports = class Protocol {
       case 'ethereum/contract':
         return new EthereumTemplateCodeGen(template)
       case 'tendermint':
-        // return new TendermintTemplateCodeGen(template)
         return null
       default:
         throw new Error(
@@ -95,7 +91,6 @@ module.exports = class Protocol {
       case 'near':
         return new NearSubgraph(optionsWithProtocol)
       case 'tendermint':
-      case 'tendermint/data':
         return new TendermintSubgraph(optionsWithProtocol)
       default:
         throw new Error(

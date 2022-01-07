@@ -36,6 +36,10 @@ module.exports = class TendermintSubgraph {
     // Validate that the the "source > abi" reference of all data sources
     // points to an existing ABI in the data source ABIs
     let abiName = dataSource.getIn(['source', 'abi'])
+    if (abiName == undefined || abiName == '') {
+      return immutable.List()
+    }
+
     let abiNames = dataSource.getIn(['mapping', 'abis']).map(abi => abi.get('name'))
     let nameErrors = abiNames.includes(abiName)
       ? immutable.List()
@@ -113,34 +117,7 @@ ${abiNames
       return immutable.List()
     }
 
-    // Obtain event signatures from the mapping
-    let manifestEvents = dataSource
-      .getIn(['mapping', 'eventHandlers'], immutable.List())
-      .map(handler => handler.get('event'))
-
-    // Obtain event signatures from the ABI
-    let abiEvents = abi.eventSignatures()
-
-    // Add errors for every manifest event signature that is not
-    // present in the ABI
-    return manifestEvents.reduce(
-      (errors, manifestEvent, index) =>
-        abiEvents.includes(manifestEvent)
-          ? errors
-          : errors.push(
-              immutable.fromJS({
-                path: [...path, 'eventHandlers', index],
-                message: `\
-Event with signature '${manifestEvent}' not present in ABI '${abi.name}'.
-Available events:
-${abiEvents
-  .sort()
-  .map(event => `- ${event}`)
-  .join('\n')}`,
-              }),
-            ),
-      immutable.List(),
-    )
+    return immutable.List()
   }
 
   validateCallFunctions() {
