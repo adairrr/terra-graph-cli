@@ -18,7 +18,7 @@ module.exports = class Protocol {
     const firstDataSourceKind = dataSourcesAndTemplates[0].kind
     return new Protocol(firstDataSourceKind)
   }
-  
+
   constructor(name) {
     this.name = this.normalizeName(name)
   }
@@ -64,7 +64,7 @@ module.exports = class Protocol {
         'aurora-testnet',
       ],
       near: ['near-mainnet'],
-      tendermint: ['cosmoshub-3', 'cosmoshub-4']
+      tendermint: ['cosmoshub-4']
     })
   }
 
@@ -84,6 +84,7 @@ module.exports = class Protocol {
         return 'Tendermint'
     }
   }
+
   // Receives a data source kind, and checks if it's valid
   // for the given protocol instance (this).
   isValidKindName(kind) {
@@ -91,6 +92,7 @@ module.exports = class Protocol {
       .get(this.name, immutable.List())
       .includes(kind)
   }
+
   hasABIs() {
     switch (this.name) {
       case 'ethereum':
@@ -110,6 +112,7 @@ module.exports = class Protocol {
         return false
     }
   }
+
   getTypeGenerator(options) {
     switch (this.name) {
       case 'ethereum':
@@ -120,18 +123,18 @@ module.exports = class Protocol {
         return null
     }
   }
+
   getTemplateCodeGen(template) {
     switch (this.name) {
       case 'ethereum':
         return new EthereumTemplateCodeGen(template)
-      case 'tendermint':
-        return null
       default:
         throw new Error(
-          `Data sources with kind '${JSON.stringify(this)}' '${this.name}' are not supported yet`,
+          `Template data sources with kind '${this.name}' are not supported yet`,
         )
     }
   }
+
   getABI() {
     switch (this.name) {
       case 'ethereum':
@@ -142,8 +145,10 @@ module.exports = class Protocol {
         return null
     }
   }
+
   getSubgraph(options = {}) {
     const optionsWithProtocol = { ...options, protocol: this }
+
     switch (this.name) {
       case 'ethereum':
         return new EthereumSubgraph(optionsWithProtocol)
