@@ -49,8 +49,6 @@ type NearContractSource {
 }
 
 type TendermintContractSource {
-  account: String
-  abi: String
   startBlock: BigInt
 }
 
@@ -83,7 +81,6 @@ type TendermintContractMapping {
   entities: [String!]!
   abis: [TendermintContractAbi!]!
   blockHandlers: [TendermintBlockHandler!]
-  callHandlers: [TendermintCallHandler!]
   eventHandlers: [TendermintContractEventHandler!]
 }
 
@@ -110,11 +107,6 @@ type TendermintBlockHandler {
 }
 
 type EthereumCallHandler {
-  function: String!
-  handler: String!
-}
-
-type TendermintCallHandler {
   function: String!
   handler: String!
 }

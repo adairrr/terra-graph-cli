@@ -1,5 +1,4 @@
 const immutable = require('immutable')
-
 const EthereumTypeGenerator = require('./ethereum/type-generator')
 const EthereumTemplateCodeGen = require('./ethereum/codegen/template')
 const EthereumABI = require('./ethereum/abi')
@@ -19,6 +18,7 @@ module.exports = class Protocol {
     const firstDataSourceKind = dataSourcesAndTemplates[0].kind
     return new Protocol(firstDataSourceKind)
   }
+  
   constructor(name) {
     this.name = this.normalizeName(name)
   }
