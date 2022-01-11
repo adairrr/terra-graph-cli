@@ -74,12 +74,10 @@ type NearContractMapping {
 }
 
 type TendermintContractMapping {
-  kind: String
   apiVersion: String!
   language: String!
   file: File!
   entities: [String!]!
-  abis: [TendermintContractAbi!]!
   blockHandlers: [TendermintBlockHandler!]
   eventHandlers: [TendermintContractEventHandler!]
 }
